@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
         posDown1 = findViewById(R.id.posDown1);
         posDown2 = findViewById(R.id.posDown2);
 
-
         Ecouteur ec = new Ecouteur();
 
         posUp1.setOnDragListener(ec);
@@ -45,10 +45,14 @@ public class MainActivity extends AppCompatActivity {
         posDown2.setOnDragListener(ec);
 
         for (int i = 0; i < deckLayout.getChildCount(); i++){
-            LinearLayout layoutCarte = (LinearLayout)deckLayout.getChildAt(i);
-            layoutCarte.setOnDragListener(ec);
-            for (int j = 0; j < layoutCarte.getChildCount(); i++) {
-                layoutCarte.getChildAt(j).setOnTouchListener(ec);
+            LinearLayout enf = (LinearLayout)deckLayout.getChildAt(i);
+            for (int j = 0; j < enf.getChildCount(); j++) {
+                LinearLayout enf2 = (LinearLayout)enf.getChildAt(j);
+                for (int k = 0; k < enf.getChildCount(); k++) {
+                    LinearLayout enf3 = (LinearLayout)enf.getChildAt(k);
+                    enf3.setOnDragListener(ec);
+                    enf3.getChildAt(0).setOnTouchListener(ec);
+                }
             }
         }
     }
@@ -60,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
-            // Creation de l'ombre
+//          Creation de l'ombre
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
             int sdkVersion = Build.VERSION.SDK_INT;
             //Demarre le processus de drag&drop
@@ -93,13 +97,16 @@ public class MainActivity extends AppCompatActivity {
                     view.setBackground(normal);
                     break;
 
-//                case DragEvent.ACTION_DROP:
-//                    carte = (View) dragEvent.getLocalState();
-//                    LinearLayout deckJeu = (LinearLayout) carte.getParent();
-//                    deckJeu.removeView(carte);
-//                    LinearLayout board = (LinearLayout) view;
-//                    board.addView(carte);
-//                    carte.setVisibility(View.VISIBLE);
+                case DragEvent.ACTION_DROP:
+                    carte = (View) dragEvent.getLocalState();
+                    LinearLayout deckJeu = (LinearLayout) carte.getParent();
+                    deckJeu.removeView(carte);
+                    LinearLayout board = (LinearLayout) view;
+                    board.addView(carte);
+                    carte.setVisibility(View.VISIBLE);
+                    break;
+            default:
+                break;
             }
             return true;
         }

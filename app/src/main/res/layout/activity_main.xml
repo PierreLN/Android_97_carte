@@ -108,7 +108,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
-                android:background="#00FFFFFF"
+                android:background="@drawable/background_carte"
                 android:orientation="horizontal" />
 
             <LinearLayout
@@ -120,6 +120,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
+                android:background="@drawable/background_carte"
                 android:orientation="horizontal" />
         </LinearLayout>
 
@@ -168,6 +169,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
+                android:background="@drawable/background_carte"
                 android:orientation="horizontal" />
 
             <LinearLayout
@@ -179,6 +181,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
+                android:background="@drawable/background_carte"
                 android:orientation="horizontal" />
         </LinearLayout>
     </LinearLayout>
@@ -188,35 +191,55 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="5"
+        android:background="@drawable/background_carte"
         android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/background_carte"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView"
+            <LinearLayout
+                android:id="@+id/spot1"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/background_carte" />
+                android:background="@drawable/background_carte"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/textView2"
+                <TextView
+                    android:id="@+id/carte1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/carte" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/spot2"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/background_carte" />
+                android:background="@drawable/background_carte"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/carte2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/carte" />
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -224,87 +247,147 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/background_carte"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView3"
+            <LinearLayout
+                android:id="@+id/spot3"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/background_carte" />
+                android:background="@drawable/background_carte"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/textView4"
+                <TextView
+                    android:id="@+id/carte3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/carte" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/spot4"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/background_carte" />
+                android:background="@drawable/background_carte"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/carte4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/carte" />
+            </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/background_carte"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView13"
+            <LinearLayout
+                android:id="@+id/spot5"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/background_carte" />
+                android:background="@drawable/background_carte"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/textView14"
+                <TextView
+                    android:id="@+id/carte5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/carte" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/spot6"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/background_carte" />
+                android:background="@drawable/background_carte"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/carte6"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/carte" />
+            </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/background_carte"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView11"
+            <LinearLayout
+                android:id="@+id/spot7"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/background_carte" />
+                android:background="@drawable/background_carte"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/textView12"
+                <TextView
+                    android:id="@+id/carte7"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/carte" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/spot8"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/background_carte" />
+                android:background="@drawable/background_carte"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/carte8"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/carte" />
+            </LinearLayout>
+
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
