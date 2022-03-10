@@ -10,8 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Carte_97">
         <activity android:name=".Final"></activity>
-        <activity android:name=".Intro" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" />
+        <activity android:name=".Intro">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

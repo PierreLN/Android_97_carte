@@ -12,6 +12,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.Vector;
+
 public class MainActivity extends AppCompatActivity {
 
     LinearLayout rootLayout;
@@ -22,6 +24,15 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout posUp2;
     LinearLayout posDown1;
     LinearLayout posDown2;
+
+    int carteRestant = 98;
+    int score = 0;
+    double temps = 0;
+
+    TextView carteRestantText;
+    TextView tempsText;
+    TextView scoreText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +47,15 @@ public class MainActivity extends AppCompatActivity {
         posUp2 = findViewById(R.id.posUp2);
         posDown1 = findViewById(R.id.posDown1);
         posDown2 = findViewById(R.id.posDown2);
+
+        carteRestantText = findViewById(R.id.carteRestantText);
+        tempsText = findViewById(R.id.tempsText);
+        scoreText = findViewById(R.id.scoreText);
+
+        carteRestantText.setText(String.valueOf(carteRestant));
+        tempsText.setText(String.valueOf(temps));
+        scoreText.setText(String.valueOf(score));
+
 
         Ecouteur ec = new Ecouteur();
 
@@ -55,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+
+
     }
 
     public class Ecouteur implements View.OnTouchListener, View.OnDragListener {
@@ -110,6 +132,9 @@ public class MainActivity extends AppCompatActivity {
             }
             return true;
         }
+
+
+
 
     }
 
