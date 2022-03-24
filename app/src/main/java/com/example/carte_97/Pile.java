@@ -2,16 +2,17 @@ package com.example.carte_97;
 
 public class Pile {
 
-    Carte carte;
-    public Pile(Carte carte) {
-        this.carte = carte;
+    int numeroCarte;
+
+    public Pile(int numeroCarte) {
+        this.numeroCarte = numeroCarte;
     }
 
-    public Carte getCarte() {
-        return carte;
+    public int getNumeroCarte() {
+        return numeroCarte;
     }
 
-    public void setCarte(Carte carte) {
-        this.carte = carte;
+    public void setNumeroCarte(int numeroCarte) {
+        this.numeroCarte = numeroCarte;
     }
 }

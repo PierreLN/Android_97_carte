@@ -2,7 +2,9 @@ package com.example.carte_97;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,11 +37,12 @@ public class MainActivity extends AppCompatActivity {
     int score = 0;
     Chronometer chronometer;
     TextView carteRestantText;
-//    TextView tempsText;
     TextView scoreText;
 
     Deck deck;
     Vector<Carte> v;
+
+    Pile pileUp1, pileUp2, piledown1, piledown2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
         Ecouteur ec = new Ecouteur();
 
+//      Position des emplacement du terrain de jeu
         posUp1.setOnDragListener(ec);
         posUp2.setOnDragListener(ec);
         posDown1.setOnDragListener(ec);
@@ -82,6 +86,12 @@ public class MainActivity extends AppCompatActivity {
         deck = new Deck(v);
         deck.creerDeck();
         TextView imageCarte;
+
+//      Generation des piles du jeu
+        pileUp1 = new Pile(0);
+        pileUp2 = new Pile(0);
+        piledown1 = new Pile(99);
+        piledown2 = new Pile(99);
 
 //      Assignation de l'ecouteur et generation des cartes
         for (int i = 0; i < deckLayout.getChildCount(); i++){
@@ -110,6 +120,8 @@ public class MainActivity extends AppCompatActivity {
 
     public class Ecouteur implements View.OnTouchListener, View.OnDragListener {
 
+        String numeroCarte = "";
+
         Drawable normal = getResources().getDrawable(R.drawable.background_carte);
         Drawable select = getResources().getDrawable(R.drawable.background_carte_selection);
 
@@ -120,12 +132,15 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+        @SuppressLint("ClickableViewAccessibility")
         @Override
         public boolean onDrag(View view, DragEvent dragEvent) {
-            View carte = null;
+            TextView carte = null;
+            TextView carteJeu = null;
             int compteurEmplacementVide = 0;
             LinearLayout enf, enf2, enf3;
-
+            int numeroCarteChoisi = 0;
+            int numeroCarteDuJeu = 0;
 
             switch (dragEvent.getAction()) {
 
@@ -139,18 +154,51 @@ public class MainActivity extends AppCompatActivity {
 
                 case DragEvent.ACTION_DRAG_ENDED:
                     view.setBackground(normal);
+
                     break;
 
 //              revoir le view en textView
                 case DragEvent.ACTION_DROP:
-                    carte = (View) dragEvent.getLocalState();
+                    carte = (TextView) dragEvent.getLocalState();
                     LinearLayout deckJeu = (LinearLayout) carte.getParent();
+//                  Prend en note la valeur de la carte a jouer
+                    numeroCarteChoisi = Integer.parseInt(carte.getText().toString());
+
                     deckJeu.removeView(carte);
                     LinearLayout board = (LinearLayout) view;
+                    board.removeAllViewsInLayout();
                     board.addView(carte);
-                    carte.setVisibility(View.VISIBLE);
+                    carte.setVisibility(TextView.VISIBLE);
 
-//                  Installer les nouvelles cartes ici
+                    // Une fois mis sur le jeu,
+                    // Enlever l'ecouteur et enregistre la valeur de la carte pour la pile
+
+                    if (board == posDown1) {
+                        piledown1.setNumeroCarte(numeroCarteChoisi);
+                        carte.setOnTouchListener(null);
+                    } else if (board == posDown2) {
+                        piledown2.setNumeroCarte(numeroCarteChoisi);
+                        carte.setOnTouchListener(null);
+                    } else if (board == posUp1) {
+                        pileUp1.setNumeroCarte(numeroCarteChoisi);
+                        carte.setOnTouchListener(null);
+                    } else if (board == posUp2){
+                        pileUp2.setNumeroCarte(numeroCarteChoisi);
+                        carte.setOnTouchListener(null);
+                    }
+
+
+                    System.out.println("pu1 :" + pileUp1.getNumeroCarte() +
+                            "\npu2 :" + pileUp2.getNumeroCarte() +
+                            "\npd1 :" + piledown1.getNumeroCarte() +
+                            "\npd2 :" + piledown2.getNumeroCarte() +
+                            "\nCarte pris : " + numeroCarteChoisi
+                    );
+
+
+
+
+//                  Generation et installation des nouvelles cartes s'il y a 2 emplacements libres
                     for (int i = 0; i < deckLayout.getChildCount(); i++) {
                         enf = (LinearLayout) deckLayout.getChildAt(i);
                         for (int j = 0; j < enf.getChildCount(); j++) {
@@ -219,4 +267,5 @@ public class MainActivity extends AppCompatActivity {
         }
         return view;
     }
+
 }
