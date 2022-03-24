@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 public class Intro extends AppCompatActivity {
 
+    GestionBD instance;
+
     TextView meilleurScroreText;
     Button btnCommencer;
 
@@ -18,12 +20,15 @@ public class Intro extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
 
+        instance = GestionBD.getInstance(this);
+        instance.ouvrirBD();
         meilleurScroreText = findViewById(R.id.meilleurScroreText);
-        meilleurScroreText.setText("0000"); // Changer le score avec bd ici
-
+        meilleurScroreText.setText(String.valueOf(instance.retourneMeilleur())); // Changer le score avec bd ici
+        instance.fermerBD();
 
         btnCommencer = (Button) findViewById(R.id.btnCommencer);
         btnCommencer.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 Intent pageMain = new Intent(Intro.this, MainActivity.class);
