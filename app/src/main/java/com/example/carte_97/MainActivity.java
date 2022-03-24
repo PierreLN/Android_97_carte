@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         v = new Vector<Carte>();
         deck = new Deck(v);
         deck.creerDeck();
+        TextView imageCarte;
 
 //      Assignation de l'ecouteur et generation des cartes
         for (int i = 0; i < deckLayout.getChildCount(); i++){
@@ -93,14 +94,9 @@ public class MainActivity extends AppCompatActivity {
 
 //                  installation des cartes du deck dans les textView
                     if (enf3.getChildAt(0) == null) {
-                            TextView imageCarte = new TextView(MainActivity.this);
+                            imageCarte = new TextView(MainActivity.this);
                             ViewGroup.LayoutParams layoutParam = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                            imageCarte.setGravity(5);
-                            imageCarte.setPadding(0,15,25,0);
-                            imageCarte.setBackgroundResource(R.drawable.carte);
-                            imageCarte.setCursorVisible(true);
-                            imageCarte.setTextSize(25);
-
+                            configurationImageCarte(imageCarte);
 //                          Retirer la carte du deck
                             imageCarte.setText(String.valueOf(deck.getV().elementAt(0).getNumero()));
                             deck.getV().removeElementAt(0);
@@ -117,44 +113,20 @@ public class MainActivity extends AppCompatActivity {
         Drawable normal = getResources().getDrawable(R.drawable.background_carte);
         Drawable select = getResources().getDrawable(R.drawable.background_carte_selection);
 
-//      Installer les nouvelles cartes ici
-
-//                    for (int i = 0; i < deckLayout.getChildCount(); i++) {
-//                        LinearLayout enf = (LinearLayout) deckLayout.getChildAt(i);
-//                        for (int j = 0; j < enf.getChildCount(); j++) {
-//                            LinearLayout enf2 = (LinearLayout) enf.getChildAt(j);
-//                            for (int k = 0; k < enf.getChildCount(); k++) {
-//                                LinearLayout enf3 = (LinearLayout) enf.getChildAt(k);
-//                                if (enf3.getChildAt(0) == null) {
-//                                    TextView imageCarte = new TextView(MainActivity.this);
-//                                    ViewGroup.LayoutParams layoutParam = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-//                                    imageCarte.setText("###");
-//                                    imageCarte.setBackgroundColor(R.drawable.carte);
-//                                    enf3.addView(imageCarte, layoutParam);
-//                                }
-//                            }
-//                        }
-//                    }
-
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
-//          Creation de l'ombre
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-            int sdkVersion = Build.VERSION.SDK_INT;
-            //Demarre le processus de drag&drop
-            if (sdkVersion <= 24) {
-                view.startDrag(null, shadowBuilder, view, 0); // deprecated API24
-            } else {
-                view.startDragAndDrop(null,shadowBuilder,view,0); // API@$++
-            }
-            // mettre la source invisible le temps du deplacement
-            view.setVisibility(View.INVISIBLE);
+            verificationVersion(view,shadowBuilder).setVisibility(View.INVISIBLE);
             return true;
         }
 
         @Override
         public boolean onDrag(View view, DragEvent dragEvent) {
             View carte = null;
+            int compteurEmplacementVide = 0;
+            LinearLayout enf, enf2, enf3;
+
+
             switch (dragEvent.getAction()) {
 
                 case DragEvent.ACTION_DRAG_ENTERED:
@@ -178,13 +150,73 @@ public class MainActivity extends AppCompatActivity {
                     board.addView(carte);
                     carte.setVisibility(View.VISIBLE);
 
+//                  Installer les nouvelles cartes ici
+                    for (int i = 0; i < deckLayout.getChildCount(); i++) {
+                        enf = (LinearLayout) deckLayout.getChildAt(i);
+                        for (int j = 0; j < enf.getChildCount(); j++) {
+                            enf2 = (LinearLayout) enf.getChildAt(j);
+                            for (int k = 0; k < enf.getChildCount(); k++) {
+                                enf3 = (LinearLayout) enf.getChildAt(k);
+                                if (enf3.getChildAt(0) == null) {
+                                    compteurEmplacementVide++;
+                                }
+                            }
+                        }
+                    }
+                    for (int i = 0; i < deckLayout.getChildCount(); i++) {
+                        enf = (LinearLayout) deckLayout.getChildAt(i);
+                        for (int j = 0; j < enf.getChildCount(); j++) {
+                            enf2 = (LinearLayout) enf.getChildAt(j);
+                            for (int l = 0; l < enf.getChildCount(); l++) {
+                                enf3 = (LinearLayout) enf.getChildAt(l);
+                                if (enf3.getChildAt(0) == null) {
+                                    if (compteurEmplacementVide % 4 == 0) {
+                                        TextView imageCarte = new TextView(MainActivity.this);
+                                        ViewGroup.LayoutParams layoutParam = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                                        configurationImageCarte(imageCarte);
+//                                      Retirer la carte du deck
+                                        imageCarte.setText(String.valueOf(deck.getV().elementAt(0).getNumero()));
+                                        deck.getV().removeElementAt(0);
+                                        enf3.addView(imageCarte, layoutParam);
+
+                                        enf3.getChildAt(0).setOnTouchListener(new View.OnTouchListener() {
+                                            @Override
+                                            public boolean onTouch(View view, MotionEvent motionEvent) {
+                                                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+                                                verificationVersion(view, shadowBuilder).setVisibility(View.INVISIBLE);
+                                                return true;
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
                     break;
-            default:
+                default:
                 break;
             }
             return true;
         }
-
     }
 
+    public void configurationImageCarte(TextView imageCarte){
+        imageCarte.setGravity(5);
+        imageCarte.setPadding(0,15,25,0);
+        imageCarte.setBackgroundResource(R.drawable.carte);
+        imageCarte.setCursorVisible(true);
+        imageCarte.setTextSize(25);
+    }
+
+    public View verificationVersion(View view, View.DragShadowBuilder shadowBuilder){
+        int sdkVersion = Build.VERSION.SDK_INT;
+        //Demarre le processus de drag&drop
+        if (sdkVersion <= 24) {
+            view.startDrag(null, shadowBuilder, view, 0); // deprecated API24
+        }
+        else {
+            view.startDragAndDrop(null,shadowBuilder,view,0); // API@$++
+        }
+        return view;
+    }
 }
