@@ -20,11 +20,14 @@ import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Collection;
 import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity {
+
+    GestionBD instance;
 
     LinearLayout rootLayout;
     LinearLayout boardGameLayout;
@@ -35,25 +38,26 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout posDown1;
     LinearLayout posDown2;
 
-    int carteRestant = 98;
-    int score = 0;
+    int carteRestant = 97;
+    Score score;
     Chronometer chronometer;
     long elapsedRealtime;
-    long bonusTemps;
+    int bonusTemps;
     TextView carteRestantText;
     TextView scoreText;
 
     Deck deck;
     Vector<Carte> v;
+    Vector<Integer> carteJouable;
 
     Pile pileUp1, pileUp2, piledown1, piledown2;
-
-    Button buttonFin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        instance = GestionBD.getInstance(this);
 
 //      Les layouts principaux
         rootLayout = findViewById(R.id.rootLayout);
@@ -68,10 +72,11 @@ public class MainActivity extends AppCompatActivity {
 
 //      Les informations sur le jeux
         carteRestantText = findViewById(R.id.carteRestantText);
+        score = new Score(0);
         scoreText = findViewById(R.id.scoreText);
 
         carteRestantText.setText(String.valueOf(carteRestant));
-        scoreText.setText(String.valueOf(score));
+        scoreText.setText(String.valueOf(score.getPointage()));
 
 //      Le chronometre
         elapsedRealtime = SystemClock.elapsedRealtime();
@@ -99,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         piledown1 = new Pile(99);
         piledown2 = new Pile(99);
 
-        buttonFin = findViewById(R.id.buttonFin);
+        carteJouable = new Vector();
 
 //      Assignation de l'ecouteur et generation des cartes
         for (int i = 0; i < deckLayout.getChildCount(); i++){
@@ -117,6 +122,8 @@ public class MainActivity extends AppCompatActivity {
                             configurationImageCarte(imageCarte);
 //                          Retirer la carte du deck
                             imageCarte.setText(String.valueOf(deck.getV().elementAt(0).getNumero()));
+//                          Ajouter la carte dans la main de carte jouable
+                            carteJouable.add(deck.getV().elementAt(0).getNumero());
                             deck.getV().removeElementAt(0);
                             enf3.addView(imageCarte, layoutParam);
                         }
@@ -129,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
     public class Ecouteur implements View.OnTouchListener, View.OnDragListener {
 
         String numeroCarte = "";
-
 
         Drawable normal = getResources().getDrawable(R.drawable.background_carte);
         Drawable select = getResources().getDrawable(R.drawable.background_carte_selection);
@@ -151,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
             int numeroCarteChoisi = 0;
             int numeroCarteDuJeu = 0;
             carte = (TextView) dragEvent.getLocalState();
+            int compteurJouable = 0;
 
             switch (dragEvent.getAction()) {
 
@@ -169,12 +176,40 @@ public class MainActivity extends AppCompatActivity {
 
 //                  degenerescence des point bonus sur une periode de 10 mins. Aucun point bonus apres 10 mins
                     if (bonusTemps >= 0) {
-                        bonusTemps = 600 - (SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000;
+                        bonusTemps = (int) (600 - (SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000);
                     } else {
                         bonusTemps = 0;
                     }
-                    scoreText.setText(String.valueOf(score));
+                    if (score != null) {
+                        scoreText.setText(String.valueOf(score.getPointage()));
+                    }
+//                  Condition de fin de partie
+                    if (carteRestant <=0) {
+                        Toast toast = Toast.makeText(getApplicationContext(), "=== VOUS AVIEZ GAGNÉ ===", Toast.LENGTH_LONG);
+                        toast.setMargin(50, 50);
+                        toast.show();
+                        finDePartie();
+                    }
 
+//                  Si les cartes de la main sont tous injouable, Fin de partie declarée
+                    for (int i = 0; i < carteJouable.size(); i++) {
+                        if (carteJouable.elementAt(i) < pileUp1.getNumeroCarte() && carteJouable.elementAt(i) != pileUp1.getNumeroCarte() - 10) {
+                            if (carteJouable.elementAt(i) < pileUp2.getNumeroCarte() && carteJouable.elementAt(i) != pileUp2.getNumeroCarte() - 10) {
+                                if (carteJouable.elementAt(i) > piledown1.getNumeroCarte() && carteJouable.elementAt(i) != piledown1.getNumeroCarte() + 10) {
+                                    if (carteJouable.elementAt(i) > piledown2.getNumeroCarte() && carteJouable.elementAt(i) != piledown2.getNumeroCarte() + 10) {
+                                        compteurJouable++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (compteurJouable == carteJouable.size()) {
+                        Toast toast = Toast.makeText(getApplicationContext(), "=== Aucune carte jouable restante ===", Toast.LENGTH_SHORT);
+                        toast.setMargin(50, 50);
+                        toast.show();
+                        finDePartie();
+                    }
+                    compteurJouable = 0;
                     break;
 
                 case DragEvent.ACTION_DROP:
@@ -188,77 +223,97 @@ public class MainActivity extends AppCompatActivity {
 //                  Une fois mis sur le jeu,
 //                  Enlever l'ecouteur et enregistre la valeur de la carte pour la pile
                     if (board == posDown1) {
-                            if (numeroCarteChoisi < piledown1.getNumeroCarte() || numeroCarteChoisi == piledown1.getNumeroCarte() + 10) {
-                                deckJeu.removeView(carte);
-                                board.removeAllViewsInLayout();
-                                board.addView(carte);
-                                carte.setVisibility(TextView.VISIBLE);
-                                piledown1.setNumeroCarte(numeroCarteChoisi);
-                                carte.setOnTouchListener(null);
-                                carteRestant--;
-                                if (numeroCarteChoisi == piledown1.getNumeroCarte() + 10) {
-                                    score += 2400 + bonusTemps;
-                                }
-                                else {
-                                    score += 800 + bonusTemps;
-                                }
-                            }
-                        }
-                        else if (board == posDown2) {
-                            if (numeroCarteChoisi < piledown2.getNumeroCarte() || numeroCarteChoisi == piledown2.getNumeroCarte() + 10){
-                                deckJeu.removeView(carte);
-                                board.removeAllViewsInLayout();
-                                board.addView(carte);
-                                carte.setVisibility(TextView.VISIBLE);
-                                piledown2.setNumeroCarte(numeroCarteChoisi);
-                                carte.setOnTouchListener(null);
-                                carteRestant--;
-                                if (numeroCarteChoisi == piledown1.getNumeroCarte() + 10) {
-                                    score += 2400 + bonusTemps;
-                                }
-                                else {
-                                    score += 800 + bonusTemps;
-                                }
-                            }
-                        }
-                        else if (board == posUp1) {
-                            if (numeroCarteChoisi > pileUp1.getNumeroCarte() || numeroCarteChoisi == pileUp1.getNumeroCarte() - 10){
-                                deckJeu.removeView(carte);
-                                board.removeAllViewsInLayout();
-                                board.addView(carte);
-                                carte.setVisibility(TextView.VISIBLE);
-                                pileUp1.setNumeroCarte(numeroCarteChoisi);
-                                carte.setOnTouchListener(null);
-                                carteRestant--;
-                                if (numeroCarteChoisi == piledown1.getNumeroCarte() + 10) {
-                                    score += 2400 + bonusTemps;
-                                }
-                                else {
-                                    score += 800 + bonusTemps;
-                                }
-                            }
-                        }
-                        else if (board == posUp2) {
-                            if (numeroCarteChoisi > pileUp2.getNumeroCarte() || numeroCarteChoisi == pileUp2.getNumeroCarte() - 10){
-                                deckJeu.removeView(carte);
-                                board.removeAllViewsInLayout();
-                                board.addView(carte);
-                                carte.setVisibility(TextView.VISIBLE);
-                                pileUp2.setNumeroCarte(numeroCarteChoisi);
-                                carte.setOnTouchListener(null);
-                                carteRestant--;
-                                if (numeroCarteChoisi == piledown1.getNumeroCarte() + 10) {
-                                    score += 2400 + bonusTemps;
-                                }
-                                else {
-                                    score += 800 + bonusTemps;
-                                }
-                            }
-                        }
-                         else {
+                        if (numeroCarteChoisi < piledown1.getNumeroCarte() || numeroCarteChoisi == piledown1.getNumeroCarte() + 10) {
+                            deckJeu.removeView(carte);
+                            board.removeAllViewsInLayout();
+                            board.addView(carte);
                             carte.setVisibility(TextView.VISIBLE);
-                            return false;
+                            piledown1.setNumeroCarte(numeroCarteChoisi);
+                            carte.setOnTouchListener(null);
+                            carteRestant--;
+                            if (numeroCarteChoisi == piledown1.getNumeroCarte() + 10) {
+                                score.additionPointage(2400 + bonusTemps);
+                            }
+                            else {
+                                score.additionPointage(800 + bonusTemps);
+                            }
+                            for (int i = 0; i < carteJouable.size(); i++) {
+                                if (numeroCarteChoisi == carteJouable.elementAt(i)) {
+                                    carteJouable.removeElementAt(i);
+                                }
+                            }
                         }
+                    }
+                    else if (board == posDown2) {
+                        if (numeroCarteChoisi < piledown2.getNumeroCarte() || numeroCarteChoisi == piledown2.getNumeroCarte() + 10){
+                            deckJeu.removeView(carte);
+                            board.removeAllViewsInLayout();
+                            board.addView(carte);
+                            carte.setVisibility(TextView.VISIBLE);
+                            piledown2.setNumeroCarte(numeroCarteChoisi);
+                            carte.setOnTouchListener(null);
+                            carteRestant--;
+                            if (numeroCarteChoisi == piledown1.getNumeroCarte() + 10) {
+                                score.additionPointage(2400 + bonusTemps);
+                            }
+                            else {
+                                score.additionPointage(800 + bonusTemps);
+                            }
+                            for (int i = 0; i < carteJouable.size(); i++) {
+                                if (numeroCarteChoisi == carteJouable.elementAt(i)) {
+                                    carteJouable.removeElementAt(i);
+                                }
+                            }
+                        }
+                    }
+                    else if (board == posUp1) {
+                        if (numeroCarteChoisi > pileUp1.getNumeroCarte() || numeroCarteChoisi == pileUp1.getNumeroCarte() - 10){
+                            deckJeu.removeView(carte);
+                            board.removeAllViewsInLayout();
+                            board.addView(carte);
+                            carte.setVisibility(TextView.VISIBLE);
+                            pileUp1.setNumeroCarte(numeroCarteChoisi);
+                            carte.setOnTouchListener(null);
+                            carteRestant--;
+                            if (numeroCarteChoisi == piledown1.getNumeroCarte() + 10) {
+                                score.additionPointage(2400 + bonusTemps);
+                            }
+                            else {
+                                score.additionPointage(800 + bonusTemps);
+                            }
+                            for (int i = 0; i < carteJouable.size(); i++) {
+                                if (numeroCarteChoisi == carteJouable.elementAt(i)) {
+                                    carteJouable.removeElementAt(i);
+                                }
+                            }
+                        }
+                    }
+                    else if (board == posUp2) {
+                        if (numeroCarteChoisi > pileUp2.getNumeroCarte() || numeroCarteChoisi == pileUp2.getNumeroCarte() - 10){
+                            deckJeu.removeView(carte);
+                            board.removeAllViewsInLayout();
+                            board.addView(carte);
+                            carte.setVisibility(TextView.VISIBLE);
+                            pileUp2.setNumeroCarte(numeroCarteChoisi);
+                            carte.setOnTouchListener(null);
+                            carteRestant--;
+                            if (numeroCarteChoisi == piledown1.getNumeroCarte() + 10) {
+                                score.additionPointage(2400 + bonusTemps);
+                            }
+                            else {
+                                score.additionPointage(800 + bonusTemps);
+                            }
+                            for (int i = 0; i < carteJouable.size(); i++) {
+                                if (numeroCarteChoisi == carteJouable.elementAt(i)) {
+                                    carteJouable.removeElementAt(i);
+                                }
+                            }
+                        }
+                    }
+                     else {
+                        carte.setVisibility(TextView.VISIBLE);
+                        return false;
+                    }
 
 //                  Generation et installation des nouvelles cartes s'il y a 2 emplacements libres
                     for (int i = 0; i < deckLayout.getChildCount(); i++) {
@@ -286,6 +341,7 @@ public class MainActivity extends AppCompatActivity {
                                         configurationImageCarte(imageCarte);
 //                                      Retirer la carte du deck
                                         imageCarte.setText(String.valueOf(deck.getV().elementAt(0).getNumero()));
+                                        carteJouable.add(deck.getV().elementAt(0).getNumero());
                                         deck.getV().removeElementAt(0);
                                         enf3.addView(imageCarte, layoutParam);
 
@@ -306,7 +362,6 @@ public class MainActivity extends AppCompatActivity {
                 default:
                 break;
             }
-
             return true;
         }
     }
@@ -331,9 +386,20 @@ public class MainActivity extends AppCompatActivity {
         return view;
     }
 
-    public void finDePartie(View view) {
-        Intent pageFinDePartie = new Intent(MainActivity.this, FinDePartie.class);
-        startActivity(pageFinDePartie);
-    }
+    public void finDePartie() {
+//      Pour empecher de multiple appel de la fonction
+        if (score != null) {
+            instance.ouvrirBD();
+            instance.ajouterScore(score, instance.getDatabase());
+            Toast toast = Toast.makeText(getApplicationContext(), "=== Votre score : " + score.getPointage() + " ===", Toast.LENGTH_LONG);
+            toast.setMargin(50, 50);
+            toast.show();
 
+            score = null;
+            instance.fermerBD();
+        }
+            Intent pageFinDePartie = new Intent(MainActivity.this, FinDePartie.class);
+            startActivity(pageFinDePartie);
+
+    }
 }

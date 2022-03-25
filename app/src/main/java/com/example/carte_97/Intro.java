@@ -32,7 +32,6 @@ public class Intro extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent pageMain = new Intent(Intro.this, MainActivity.class);
-                pageMain.putExtra("Fenêtre de jeu", "Jeux de cartes");
                 startActivity(pageMain);
             }
         });

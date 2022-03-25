@@ -32,8 +32,7 @@ public class  GestionBD extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE score (_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 " point INTEGER); ");
 
-
-        ajouterScore(new Score( 20), db);
+        ajouterScore(new Score( 50), db);
         ajouterScore(new Score( 2120), db);
         ajouterScore(new Score( 12345), db);
     }
@@ -48,29 +47,17 @@ public class  GestionBD extends SQLiteOpenHelper {
     public Vector<String> retournerScore() {
         Vector<String> reponse = new Vector<>();
 
-        Cursor cursor = database.rawQuery("SELECT point FROM score", null, null);
+        Cursor cursor = database.rawQuery("SELECT '#' || _id || ' partie - ' || point || ' Points' FROM score ORDER BY point DESC LIMIT 10", null, null);
         while (cursor.moveToNext()) {
             reponse.add(cursor.getString(0));
         }
         return reponse;
     }
 
-    public double retourneMoyenne() {
-        double total = 0;
-        double reponse = 0;
-        Cursor c = database.rawQuery("SELECT point FROM score ORDER BY point DESC", null, null);
-
-        while (c.moveToNext()) {
-            total += c.getInt(0);
-        }
-        reponse = total/c.getCount();
-        return reponse;
-    }
-
-    public String retourneMeilleur() {
+    public int retourneMeilleur() {
         Cursor c = database.rawQuery("SELECT point FROM score ORDER BY point DESC LIMIT 1", null, null);
         c.moveToNext();
-        return c.getString(0);
+        return c.getInt(0);
     }
 
     @Override

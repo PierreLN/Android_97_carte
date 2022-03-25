@@ -15,4 +15,8 @@ public class Score {
     public void setPointage(int pointage) {
         this.pointage = pointage;
     }
+
+    public void additionPointage(int point) {
+        pointage += point;
+    }
 }
