@@ -12,7 +12,7 @@ public class Deck {
 
     // Ajouter 98 cartes (1 a 98)
     public Vector<Carte> creerDeck() {
-        for (int i = 1; i < 99; i++) {
+        for (int i = 2; i < 99; i++) {
             v.add(new Carte(i));
         }
         // Melanger les cartes dans le vector

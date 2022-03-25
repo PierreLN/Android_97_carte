@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import java.util.Vector;
+
 public class  GestionBD extends SQLiteOpenHelper {
 
     private static GestionBD instance;
@@ -32,6 +34,8 @@ public class  GestionBD extends SQLiteOpenHelper {
 
 
         ajouterScore(new Score( 20), db);
+        ajouterScore(new Score( 2120), db);
+        ajouterScore(new Score( 12345), db);
     }
 
     public void ajouterScore(Score score, SQLiteDatabase db) {
@@ -41,10 +45,20 @@ public class  GestionBD extends SQLiteOpenHelper {
         db.insert("score",null, cv);
     }
 
+    public Vector<String> retournerScore() {
+        Vector<String> reponse = new Vector<>();
+
+        Cursor cursor = database.rawQuery("SELECT point FROM score", null, null);
+        while (cursor.moveToNext()) {
+            reponse.add(cursor.getString(0));
+        }
+        return reponse;
+    }
+
     public double retourneMoyenne() {
         double total = 0;
         double reponse = 0;
-        Cursor c = database.rawQuery("SELECT point FROM score", null, null);
+        Cursor c = database.rawQuery("SELECT point FROM score ORDER BY point DESC", null, null);
 
         while (c.moveToNext()) {
             total += c.getInt(0);
